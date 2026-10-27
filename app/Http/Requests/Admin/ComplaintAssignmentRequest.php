@@ -18,7 +18,7 @@ class ComplaintAssignmentRequest extends FormRequest
         return [
             'assigned_to' => [
                 'nullable',
-                Rule::exists('users', 'id')->where(fn($query) => $query->whereIn('role', [
+                Rule::exists('users', 'id')->where(fn ($query) => $query->whereIn('role', [
                     User::ROLE_ADMIN,
                     User::ROLE_MANAGER,
                     User::ROLE_SUPPORT_AGENT,

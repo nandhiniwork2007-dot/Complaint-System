@@ -27,8 +27,8 @@ class UserController extends Controller
                         ->orWhere('phone', 'like', "%{$search}%");
                 });
             })
-            ->when($request->filled('role'), fn($query) => $query->where('role', $request->string('role')->value()))
-            ->when($request->filled('is_active'), fn($query) => $query->where('is_active', filter_var($request->input('is_active'), FILTER_VALIDATE_BOOLEAN)))
+            ->when($request->filled('role'), fn ($query) => $query->where('role', $request->string('role')->value()))
+            ->when($request->filled('is_active'), fn ($query) => $query->where('is_active', filter_var($request->input('is_active'), FILTER_VALIDATE_BOOLEAN)))
             ->latest()
             ->paginate(12)
             ->withQueryString();

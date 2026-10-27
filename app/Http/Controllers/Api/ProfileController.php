@@ -7,10 +7,11 @@ use App\Http\Requests\PasswordUpdateRequest;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
-    public function show(\Illuminate\Http\Request $request): JsonResponse
+    public function show(Request $request): JsonResponse
     {
         return response()->json([
             'data' => new UserResource($request->user()),

@@ -1,27 +1,42 @@
 <template>
-    <GuestLayout title="Welcome back" subtitle="Sign in to track and manage your complaints.">
-        <form class="mt-8 grid gap-4" @submit.prevent="submit">
-            <label class="grid gap-2 text-sm">
-                <span>Email</span>
-                <input v-model="form.email" type="email"
-                    class="rounded-2xl border border-white/20 bg-white/10 px-4 py-3" />
-                <small class="text-rose-300">{{ error('email') }}</small>
-            </label>
-            <label class="grid gap-2 text-sm">
-                <span>Password</span>
-                <input v-model="form.password" type="password"
-                    class="rounded-2xl border border-white/20 bg-white/10 px-4 py-3" />
-                <small class="text-rose-300">{{ error('password') }}</small>
-            </label>
-            <button class="rounded-full bg-teal-400 px-5 py-3 text-sm font-semibold text-slate-950 cursor-pointer">{{
-                loading ? 'Signing in...' : 'Login' }}</button>
-        </form>
+    <GuestLayout title="Sign in" subtitle="Access your portal to track and manage your complaints." variant="Sign in to your account">
+        <template #content>
+            <form class="mt-10 grid gap-4" @submit.prevent="submit">
+                <Input
+                    v-model="form.email"
+                    label="Email address"
+                    type="email"
+                    name="email"
+                    placeholder="you@company.com"
+                    :error="error('email')"
+                    required
+                    autocomplete="email"
+                />
+                <Input
+                    v-model="form.password"
+                    label="Password"
+                    type="password"
+                    name="password"
+                    placeholder="••••••••"
+                    :error="error('password')"
+                    required
+                    autocomplete="current-password"
+                />
+                <Button type="submit" variant="primary" :loading="loading" class="w-full">
+                    {{ loading ? 'Signing in...' : 'Sign in' }}
+                </Button>
+            </form>
 
-        <p class="mt-6 text-sm text-slate-300">
-            Need an account?
-            <RouterLink class="font-semibold text-white" to="/register">Register</RouterLink>
-        </p>
-        <RouterLink class="mt-2 inline-block text-sm text-teal-300" to="/forgot-password">Forgot password?</RouterLink>
+            <div class="mt-10 border-t border-surface-border pt-6">
+                <p class="text-sm text-text-secondary text-center">
+                    Don't have an account?{{ ' ' }}
+                    <RouterLink class="font-medium text-primary hover:text-primary-dark" to="/register">Create one</RouterLink>
+                </p>
+                <p class="mt-3 text-sm text-text-secondary text-center">
+                    <RouterLink class="text-primary hover:text-primary-dark" to="/forgot-password">Forgot your password?</RouterLink>
+                </p>
+            </div>
+        </template>
     </GuestLayout>
 </template>
 
@@ -29,6 +44,8 @@
 import { reactive, ref } from 'vue';
 import { useRouter, RouterLink } from 'vue-router';
 import GuestLayout from '../../layouts/GuestLayout.vue';
+import Input from '../../components/Input.vue';
+import Button from '../../components/Button.vue';
 import { useAuthStore } from '../../stores/auth';
 
 const auth = useAuthStore();

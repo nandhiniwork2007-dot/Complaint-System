@@ -1,50 +1,77 @@
 <template>
-    <form class="grid gap-4" @submit.prevent="submitForm">
+    <form class="grid gap-5" @submit.prevent="submitForm">
         <div class="grid gap-4 md:grid-cols-2">
-            <label class="grid gap-2 text-sm">
-                <span class="font-medium text-slate-700">Title</span>
-                <input v-model="form.title"
-                    class="rounded-2xl border border-slate-200 bg-white px-4 py-3 outline-none ring-0 focus:border-teal-500"
-                    type="text" />
-                <small class="text-rose-600">{{ errors.title?.[0] }}</small>
-            </label>
-            <label class="grid gap-2 text-sm">
-                <span class="font-medium text-slate-700">Category</span>
-                <select v-model="form.complaint_category_id"
-                    class="rounded-2xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-teal-500">
-                    <option value="">Select a category</option>
-                    <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}
+            <div class="field">
+                <label class="block text-sm font-medium text-text-secondary mb-1.5">Title</label>
+                <Input
+                    v-model="form.title"
+                    type="text"
+                    name="title"
+                    placeholder="Brief summary of the issue"
+                    :error="errors.title"
+                    required
+                />
+            </div>
+
+            <div class="field">
+                <label class="block text-sm font-medium text-text-secondary mb-1.5">Category</label>
+                <Select
+                    v-model="form.complaint_category_id"
+                    name="complaint_category_id"
+                    placeholder="Select a category"
+                    :error="errors.complaint_category_id"
+                    required
+                >
+                    <option value="">Choose a category</option>
+                    <option v-for="category in categories" :key="category.id" :value="category.id">
+                        {{ category.name }}
                     </option>
-                </select>
-                <small class="text-rose-600">{{ errors.complaint_category_id?.[0] }}</small>
-            </label>
+                </Select>
+            </div>
         </div>
 
-        <label class="grid gap-2 text-sm">
-            <span class="font-medium text-slate-700">Description</span>
-            <textarea v-model="form.description" rows="8"
-                class="rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3 outline-none focus:border-teal-500"></textarea>
-            <small class="text-rose-600">{{ errors.description?.[0] }}</small>
-        </label>
+        <div class="field">
+            <label class="block text-sm font-medium text-text-secondary mb-1.5">Description</label>
+            <p class="text-xs text-text-secondary mb-2">Describe what happened, when, and what you expected instead.</p>
+            <Textarea
+                v-model="form.description"
+                name="description"
+                rows="8"
+                placeholder="e.g. I was charged twice for the same subscription on May 1st."
+                :error="errors.description"
+                required
+            />
+        </div>
 
-        <label class="grid gap-2 text-sm">
-            <span class="font-medium text-slate-700">Attachments</span>
-            <input multiple accept=".jpg,.jpeg,.png,.pdf"
-                class="rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-3" type="file"
-                @change="captureFiles" />
-            <small class="text-slate-500">Up to 5 files. Images and PDF only.</small>
-            <small class="text-rose-600">{{ errors['attachments.0']?.[0] || errors.attachments?.[0] }}</small>
-        </label>
+        <div class="field">
+            <label class="block text-sm font-medium text-text-secondary mb-1.5">Attachments</label>
+            <p class="text-xs text-text-secondary mb-2">Up to 5 files. Images and PDF only, 5 MB each.</p>
+            <FileAttachment
+                v-model="form.attachments"
+                :error="errors.attachments"
+            />
+        </div>
 
-        <button :disabled="submitting"
-            class="rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white disabled:opacity-60 cursor-pointer">
-            {{ submitting ? 'Saving...' : submitLabel }}
-        </button>
+        <div class="pt-2">
+            <Button
+                type="submit"
+                variant="primary"
+                :disabled="submitting"
+                :loading="submitting"
+            >
+                {{ submitting ? 'Saving...' : submitLabel }}
+            </Button>
+        </div>
     </form>
 </template>
 
 <script setup>
 import { reactive, ref, watch } from 'vue';
+import Input from './Input.vue';
+import Select from './Select.vue';
+import Textarea from './Textarea.vue';
+import FileAttachment from './FileAttachment.vue';
+import Button from './Button.vue';
 
 const props = defineProps({
     complaint: { type: Object, default: null },
@@ -63,7 +90,8 @@ const form = reactive({
     attachments: [],
 });
 
-watch(() => props.complaint,
+watch(
+    () => props.complaint,
     (complaint) => {
         form.title = complaint?.title ?? '';
         form.complaint_category_id = complaint?.category?.id ?? '';
@@ -72,10 +100,6 @@ watch(() => props.complaint,
     },
     { immediate: true },
 );
-
-function captureFiles(event) {
-    form.attachments = Array.from(event.target.files || []);
-}
 
 function submitForm() {
     emit('submit', { ...form });

@@ -23,7 +23,7 @@ class ComplaintStatusUpdateRequest extends FormRequest
                     Complaint::STATUS_IN_PROGRESS,
                     Complaint::STATUS_RESOLVED,
                     Complaint::STATUS_REJECTED,
-                ])
+                ]),
             ],
             'assigned_to' => ['nullable', 'exists:users,id'],
             'public_message' => ['nullable', 'string'],

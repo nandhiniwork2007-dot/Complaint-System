@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\ComplaintMessageFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ComplaintMessage extends Model
 {
-    /** @use HasFactory<\Database\Factories\ComplaintMessageFactory> */
+    /** @use HasFactory<ComplaintMessageFactory> */
     use HasFactory;
 
     protected $fillable = [

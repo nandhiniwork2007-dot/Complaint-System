@@ -14,8 +14,7 @@ class ComplaintStatusUpdated extends Notification
     public function __construct(
         public Complaint $complaint,
         public string $message
-    ) {
-    }
+    ) {}
 
     public function via(object $notifiable): array
     {

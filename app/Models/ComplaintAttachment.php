@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\ComplaintAttachmentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ComplaintAttachment extends Model
 {
-    /** @use HasFactory<\Database\Factories\ComplaintAttachmentFactory> */
+    /** @use HasFactory<ComplaintAttachmentFactory> */
     use HasFactory;
 
     protected $fillable = [

@@ -2,11 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\ComplaintCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends Factory<\App\Models\ComplaintCategory>
+ * @extends Factory<ComplaintCategory>
  */
 class ComplaintCategoryFactory extends Factory
 {

@@ -1,83 +1,156 @@
 <template>
-    <AppShell section="user" title="Complaints" subtitle="Search, filter, and review every complaint you've submitted.">
+    <AppShell section="user" title="My complaints" subtitle="Search, filter, and review every complaint you've submitted.">
         <template #actions>
-            <RouterLink to="/complaints/new"
-                class="rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white">New Complaint</RouterLink>
+            <Button variant="primary" @click="router.push('/complaints/new')">
+                <Icon name="PlusIcon" class="h-4 w-4" />
+                <span>Submit complaint</span>
+            </Button>
         </template>
 
-        <div class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <div class="grid gap-3 md:grid-cols-7">
-                <input v-model="filters.search" placeholder="Search"
-                    class="md:col-span-2 rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-teal-500" />
-                <select v-model="filters.status"
-                    class="rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-teal-500">
+        <Card padded bordered class="mb-6">
+            <div class="grid gap-3 sm:gap-4 sm:grid-cols-4 lg:grid-cols-6">
+                <Input
+                    v-model="filters.search"
+                    label="Search"
+                    placeholder="Title or reference"
+                    class="col-span-full sm:col-span-2 lg:col-span-3"
+                />
+                <Select
+                    v-model="filters.status"
+                    label="Status"
+                    placeholder="All statuses"
+                >
                     <option value="">All statuses</option>
                     <option value="pending">Pending</option>
                     <option value="in_progress">In Progress</option>
                     <option value="resolved">Resolved</option>
                     <option value="rejected">Rejected</option>
-                </select>
-                <select v-model="filters.category_id"
-                    class="rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-teal-500">
+                </Select>
+                <Select
+                    v-model="filters.category_id"
+                    label="Category"
+                    placeholder="All categories"
+                >
                     <option value="">All categories</option>
-                    <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}
+                    <option v-for="category in categories" :key="category.id" :value="category.id">
+                        {{ category.name }}
                     </option>
-                </select>
-                <input v-model="filters.date_from" type="date"
-                    class="rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-teal-500" />
-                <input v-model="filters.date_to" type="date"
-                    class="rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-teal-500" />
-                <div class="flex gap-3">
-                    <button
-                        class="flex-1 rounded-full bg-teal-500 px-5 py-3 text-sm font-semibold text-white cursor-pointer"
-                        @click="loadComplaints">Apply</button>
-                    <button class="rounded-full border border-slate-300 px-5 py-3 text-sm font-semibold cursor-pointer"
-                        @click="resetFilters">Reset</button>
+                </Select>
+                <div class="flex items-end gap-2 col-span-full sm:col-span-1">
+                    <Input v-model="filters.date_from" label="From" type="date" class="w-full" />
+                    <Input v-model="filters.date_to" label="To" type="date" class="w-full" />
+                </div>
+                <div class="flex items-end gap-2 col-span-full sm:col-span-1">
+                    <Button variant="outline" @click="loadComplaints" class="w-full">Apply</Button>
+                    <Button variant="ghost" @click="resetFilters" class="w-full">Reset</Button>
                 </div>
             </div>
+        </Card>
 
-            <div v-if="complaints.length" class="mt-6 grid gap-3">
-                <RouterLink v-for="complaint in complaints" :key="complaint.id" :to="`/complaints/${complaint.id}`"
-                    class="rounded-[1.5rem] border border-slate-100 px-4 py-4 hover:border-teal-500">
-                    <div class="flex items-center justify-between gap-4">
-                        <div>
-                            <p class="font-semibold">{{ complaint.title }}</p>
-                            <p class="text-sm text-slate-500">{{ complaint.reference }} • {{ complaint.category?.name }}
-                            </p>
-                        </div>
-                        <StatusBadge :status="complaint.status" />
-                    </div>
-                </RouterLink>
-            </div>
-            <p v-else class="mt-6 rounded-2xl bg-slate-50 px-4 py-6 text-sm text-slate-500">No complaints match the current filters.</p>
+        <div v-if="complaints.data?.length" class="mb-6">
+            <Table :columns="tableColumns" :rows="complaints.data" :rowKey="row => row.id">
+                <template #header-reference>Ref.</template>
+                <template #header-title>Title</template>
+                <template #header-category>Category</template>
+                <template #header-status>Status</template>
+                <template #header-submitted_at>Submitted</template>
+
+                <template #cell-reference="{ row }">
+                    <span class="text-xs font-semibold text-text-muted">{{ row.reference }}</span>
+                </template>
+                <template #cell-title="{ row }">
+                    <RouterLink :to="`/complaints/${row.id}`" class="text-sm font-medium text-text-main hover:text-primary transition-colors">
+                        {{ row.title }}
+                    </RouterLink>
+                </template>
+                <template #cell-category="{ row }">
+                    <span class="text-xs text-text-secondary">{{ row.category?.name || '—' }}</span>
+                </template>
+                <template #cell-status="{ row }">
+                    <Badge :variant="row.status">{{ row.status.replace('_', ' ') }}</Badge>
+                </template>
+                <template #cell-submitted_at="{ row }">
+                    <span class="text-xs text-text-secondary">{{ formatDate(row.submitted_at) }}</span>
+                </template>
+
+                <template #actions="{ row }">
+                    <RouterLink :to="`/complaints/${row.id}`" class="text-sm font-medium text-primary hover:text-primary-dark transition-colors">View →</RouterLink>
+                </template>
+            </Table>
+
+            <Pagination
+                :current-page="complaints.current_page"
+                :per-page="complaints.per_page"
+                :total="complaints.total"
+                @update:current-page="changePage"
+            />
+        </div>
+
+        <div v-else class="py-16 text-center">
+            <EmptyState
+                title="No complaints found"
+                :description="hasFilters ? 'Try adjusting your filters to find what you are looking for.' : 'You have not submitted any complaints yet.'"
+                iconColor="text-text-muted"
+            >
+                <template v-if="!hasFilters" #action>
+                    <Button variant="primary" @click="router.push('/complaints/new')">
+                        Submit your first complaint
+                    </Button>
+                </template>
+            </EmptyState>
         </div>
     </AppShell>
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, watch, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
-import { RouterLink } from 'vue-router';
-import AppShell from '../../layouts/AppShell.vue';
-import StatusBadge from '../../components/StatusBadge.vue';
 import { useToastStore } from '../../stores/toasts';
 import { extractMessage, normalizeItems } from '../../utils/http';
+import AppShell from '../../layouts/AppShell.vue';
+import Card from '../../components/Card.vue';
+import Input from '../../components/Input.vue';
+import Select from '../../components/Select.vue';
+import Button from '../../components/Button.vue';
+import Icon from '../../components/Icon.vue';
+import { RouterLink } from 'vue-router';
+import Table from '../../components/Table.vue';
+import Pagination from '../../components/Pagination.vue';
+import EmptyState from '../../components/EmptyState.vue';
+import Badge from '../../components/Badge.vue';
 
+const router = useRouter();
 const toast = useToastStore();
-const complaints = ref([]);
 const categories = ref([]);
-const initialFilters = { search: '', status: '', category_id: '', date_from: '', date_to: '' };
+const complaints = ref({ data: [], current_page: 1, per_page: 10, total: 0 });
+const initialFilters = { search: '', status: '', category_id: '', date_from: '', date_to: '', page: 1 };
 const filters = reactive({ ...initialFilters });
 
+const tableColumns = ['reference', 'title', 'category', 'status', 'submitted_at'];
+
+const hasFilters = computed(() => {
+    return Object.values(filters).some((v, i) => i > 4 && v);
+});
+
 async function loadCategories() {
-    const { data } = await axios.get('/api/categories');
-    categories.value = normalizeItems(data);
+    try {
+        const { data } = await axios.get('/api/categories');
+        categories.value = normalizeItems(data);
+    } catch (error) {
+        toast.error(extractMessage(error, 'Unable to load categories.'));
+    }
 }
 
 async function loadComplaints() {
     try {
-        const { data } = await axios.get('/api/complaints', { params: filters });
-        complaints.value = normalizeItems(data);
+        const { data } = await axios.get('/api/complaints', { params: { ...filters, page: filters.page } });
+        complaints.value = {
+            data: normalizeItems(data),
+            current_page: data.current_page ?? 1,
+            per_page: data.per_page ?? 10,
+            total: data.total ?? 0,
+        };
     } catch (error) {
         toast.error(extractMessage(error, 'Unable to load complaints.'));
     }
@@ -88,6 +161,16 @@ function resetFilters() {
     loadComplaints();
 }
 
+function changePage(page) {
+    filters.page = page;
+    loadComplaints();
+}
+
+function formatDate(iso) {
+    if (!iso) return '';
+    return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
 onMounted(async () => {
     try {
         await Promise.all([loadCategories(), loadComplaints()]);
@@ -95,4 +178,11 @@ onMounted(async () => {
         toast.error(extractMessage(error, 'Unable to load complaint filters.'));
     }
 });
+
+watch(
+    () => filters.page,
+    () => {
+        loadComplaints();
+    },
+);
 </script>

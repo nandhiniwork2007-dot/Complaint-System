@@ -57,7 +57,7 @@ class DashboardController extends Controller
         $totals = $this->countComplaintsByBucket(
             $start,
             $start->endOfDay(),
-            fn(CarbonImmutable $date) => $date->startOfHour()->format('Y-m-d H:00')
+            fn (CarbonImmutable $date) => $date->startOfHour()->format('Y-m-d H:00')
         );
         $buckets = [];
 
@@ -82,7 +82,7 @@ class DashboardController extends Controller
         $totals = $this->countComplaintsByBucket(
             $start,
             $end,
-            fn(CarbonImmutable $date) => $date->toDateString()
+            fn (CarbonImmutable $date) => $date->toDateString()
         );
         $buckets = [];
 
@@ -107,7 +107,7 @@ class DashboardController extends Controller
         $totals = $this->countComplaintsByBucket(
             $start,
             $end,
-            fn(CarbonImmutable $date) => $date->toDateString()
+            fn (CarbonImmutable $date) => $date->toDateString()
         );
         $buckets = [];
 
@@ -131,7 +131,7 @@ class DashboardController extends Controller
         $totals = $this->countComplaintsByBucket(
             $start,
             $start->endOfYear(),
-            fn(CarbonImmutable $date) => $date->format('Y-m')
+            fn (CarbonImmutable $date) => $date->format('Y-m')
         );
         $buckets = [];
 

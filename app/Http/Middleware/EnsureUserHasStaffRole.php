@@ -15,7 +15,7 @@ class EnsureUserHasStaffRole
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->user() || !$request->user()->isStaff()) {
+        if (! $request->user() || ! $request->user()->isStaff()) {
             abort(403, 'You are not authorized to access the admin portal.');
         }
 

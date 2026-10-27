@@ -15,6 +15,7 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
+        "@lucide/vue": "^1.62.0",
         "@vitejs/plugin-vue": "^6.0.5",
         "pinia": "^3.0.4",
         "vue": "^3.5.30",

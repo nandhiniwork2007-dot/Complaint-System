@@ -33,7 +33,7 @@ class ComplaintResource extends JsonResource
                 'name' => $this->assignee->name,
                 'email' => $this->assignee->email,
             ] : null,
-            'attachments' => $this->attachments->map(fn($attachment) => [
+            'attachments' => $this->attachments->map(fn ($attachment) => [
                 'id' => $attachment->id,
                 'name' => $attachment->original_name,
                 'mime_type' => $attachment->mime_type,
@@ -41,7 +41,7 @@ class ComplaintResource extends JsonResource
                 'download_url' => url("/api/complaints/{$this->id}/attachments/{$attachment->id}"),
             ])->values(),
             'messages' => ComplaintMessageResource::collection($this->whenLoaded('messages')),
-            'audit_logs' => $this->when($request->user()?->isStaff(), fn() => $this->auditLogs->map(fn($log) => [
+            'audit_logs' => $this->when($request->user()?->isStaff(), fn () => $this->auditLogs->map(fn ($log) => [
                 'id' => $log->id,
                 'action' => $log->action,
                 'description' => $log->description,

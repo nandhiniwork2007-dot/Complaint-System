@@ -1,56 +1,107 @@
 <template>
-    <AppShell section="admin" title="Settings" subtitle="Control system-wide notification and template preferences.">
-        <div class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <div class="grid gap-4">
-                <label v-for="setting in settings" :key="setting.id" class="grid gap-2 text-sm">
-                    <span class="font-medium text-slate-700">{{ setting.label }}</span>
-                    <input v-if="setting.type !== 'textarea'" v-model="settingValues[setting.id]"
-                        class="rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-teal-500" />
-                    <textarea v-else v-model="settingValues[setting.id]" rows="4"
-                        class="rounded-[1.5rem] border border-slate-200 px-4 py-3 outline-none focus:border-teal-500"></textarea>
-                </label>
+    <AppShell section="admin" title="System settings" subtitle="Control system-wide notification and template preferences.">
+        <Card padded bordered>
+            <div v-if="settingsLoading" class="py-8 text-center">
+                <Loading variant="page" label="Loading settings…" />
             </div>
-            <button class="mt-6 rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white cursor-pointer"
-                @click="save">Save settings</button>
-        </div>
+
+            <div v-else-if="groupedSettings.length" class="space-y-6">
+                <div
+                    v-for="group in groupedSettings"
+                    :key="group.group"
+                    class="space-y-4"
+                >
+                    <h3 class="text-xs font-semibold text-text-muted uppercase tracking-wider border-b border-surface-border pb-2">
+                        {{ group.group.charAt(0).toUpperCase() + group.group.slice(1) }}
+                    </h3>
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <div
+                            v-for="setting in group.items"
+                            :key="setting.id"
+                            class="flex flex-col gap-2 p-4 rounded-xl border border-surface-border bg-surface"
+                        >
+                            <label class="text-xs font-medium text-text-main">{{ setting.label }}</label>
+                            <p class="text-[10px] text-text-muted">{{ setting.key }}</p>
+                            <component
+                                :is="setting.type === 'textarea' ? Textarea : Input"
+                                v-model="settingValues[setting.id]"
+                                name="setting-value"
+                                :rows="setting.type === 'textarea' ? 2 : undefined"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex justify-end">
+                    <Button variant="primary" :loading="saving" @click="saveSettings">Save all settings</Button>
+                </div>
+            </div>
+
+            <div v-else class="py-8 text-center">
+                <EmptyState title="No settings available" description="There are no system settings configured." iconColor="text-text-muted" />
+            </div>
+        </Card>
     </AppShell>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, reactive, computed } from 'vue';
 import axios from 'axios';
 import { useToastStore } from '../../stores/toasts';
-import AppShell from '../../layouts/AppShell.vue';
 import { extractMessage, normalizeItems } from '../../utils/http';
+import AppShell from '../../layouts/AppShell.vue';
+import Card from '../../components/Card.vue';
+import Input from '../../components/Input.vue';
+import Textarea from '../../components/Textarea.vue';
+import Button from '../../components/Button.vue';
+import Loading from '../../components/Loading.vue';
+import EmptyState from '../../components/EmptyState.vue';
 
 const toast = useToastStore();
 const settings = ref([]);
 const settingValues = ref({});
+const settingsLoading = ref(false);
+const saving = ref(false);
+
+const groupedSettings = computed(() => {
+    const groups = {};
+    settings.value.forEach((s) => {
+        if (!groups[s.group]) groups[s.group] = [];
+        groups[s.group].push(s);
+    });
+    return Object.entries(groups).map(([group, items]) => ({ group, items }));
+});
 
 async function load() {
+    settingsLoading.value = true;
     try {
         const { data } = await axios.get('/api/admin/settings');
         const items = normalizeItems(data);
-
         settings.value = items;
-        settingValues.value = Object.fromEntries(items.map((setting) => [setting.id, setting.value?.body ?? setting.value ?? '']));
+        settingValues.value = Object.fromEntries(
+            items.map((s) => [s.id, s.value?.body ?? s.value ?? ''])
+        );
     } catch (error) {
         toast.error(extractMessage(error, 'Unable to load settings.'));
+    } finally {
+        settingsLoading.value = false;
     }
 }
 
-async function save() {
+async function saveSettings() {
+    saving.value = true;
     try {
         const payload = { settings: {} };
-
         for (const [id, value] of Object.entries(settingValues.value)) {
             payload.settings[id] = { value };
         }
-
         const { data } = await axios.put('/api/admin/settings', payload);
         toast.success(data.message || 'Settings saved successfully.');
+        settings.value = normalizeItems(data.data);
     } catch (error) {
         toast.error(extractMessage(error, 'Unable to save settings.'));
+    } finally {
+        saving.value = false;
     }
 }
 

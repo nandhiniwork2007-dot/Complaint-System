@@ -16,7 +16,7 @@ class AuthenticatedSessionController extends Controller
     {
         $credentials = $request->safe()->only(['email', 'password']);
 
-        if (!Auth::attempt($credentials, (bool) $request->boolean('remember'))) {
+        if (! Auth::attempt($credentials, (bool) $request->boolean('remember'))) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -26,7 +26,7 @@ class AuthenticatedSessionController extends Controller
 
         $user = $request->user();
 
-        if (!$user->is_active) {
+        if (! $user->is_active) {
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
