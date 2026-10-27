@@ -17,8 +17,11 @@ import AdminComplaintShowPage from '../pages/admin/AdminComplaintShowPage.vue';
 import AdminCategoriesPage from '../pages/admin/AdminCategoriesPage.vue';
 import AdminSettingsPage from '../pages/admin/AdminSettingsPage.vue';
 import AdminUsersPage from '../pages/admin/AdminUsersPage.vue';
+<<<<<<< HEAD
 import AdminReportsPage from '../pages/admin/AdminReportsPage.vue';
 import AdminAuditPage from '../pages/admin/AdminAuditPage.vue';
+=======
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
 
 const router = createRouter({
     history: createWebHistory(),
@@ -40,8 +43,11 @@ const router = createRouter({
         { path: '/admin/categories', component: AdminCategoriesPage, meta: { requiresAuth: true, requiresVerified: true, requiresStaff: true, section: 'admin' } },
         { path: '/admin/settings', component: AdminSettingsPage, meta: { requiresAuth: true, requiresVerified: true, requiresStaff: true, section: 'admin' } },
         { path: '/admin/users', component: AdminUsersPage, meta: { requiresAuth: true, requiresVerified: true, requiresStaff: true, section: 'admin' } },
+<<<<<<< HEAD
         { path: '/admin/reports', component: AdminReportsPage, meta: { requiresAuth: true, requiresVerified: true, requiresStaff: true, section: 'admin' } },
         { path: '/admin/audit', component: AdminAuditPage, meta: { requiresAuth: true, requiresVerified: true, requiresStaff: true, requiresUserManager: true, section: 'admin' } },
+=======
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
     ],
 });
 
@@ -61,10 +67,13 @@ router.beforeEach(async (to) => {
         return '/dashboard';
     }
 
+<<<<<<< HEAD
     if (to.meta.requiresUserManager && !auth.user?.can_manage_users) {
         return '/admin/dashboard';
     }
 
+=======
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
     if (to.meta.requiresVerified && auth.user && !auth.user.email_verified_at) {
         return '/verify-email';
     }

@@ -6,7 +6,10 @@ use App\Models\Complaint;
 use App\Models\ComplaintCategory;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+<<<<<<< HEAD
 use Illuminate\Support\Str;
+=======
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
 
 /**
  * @extends Factory<Complaint>

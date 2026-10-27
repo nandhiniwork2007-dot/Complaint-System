@@ -43,6 +43,13 @@ metadata:
 - Added proper prop types and TypeScript interfaces
 - Maintained existing API endpoints and data flows
 - Updated component imports and dependencies
+<<<<<<< HEAD
+=======
+- Fixed duplicate class bindings in Avatar.vue
+- Fixed TypeScript syntax in AppShell.vue for plain JavaScript compatibility
+- Fixed import paths in ComplaintForm.vue and AppShell.vue
+- Fixed RouterLink import in ComplaintsPage.vue
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
 
 ## Verification
 - Frontend build successful: `npm run build` completed without errors
@@ -51,13 +58,31 @@ metadata:
 - Navigation, filters, forms, and authentication remain functional
 
 ## Files Modified
+<<<<<<< HEAD
+=======
+- `resources/css/app.css` (updated design tokens)
+- `resources/js/layouts/AppShell.vue` (redesigned sidebar and navigation)
+- `resources/js/layouts/GuestLayout.vue` (redesigned auth pages wrapper)
+- `resources/js/components/Button.vue` (fixed v-else syntax)
+- `resources/js/components/Avatar.vue` (fixed duplicate class binding)
+- `resources/js/components/Select.vue` (fixed empty value binding)
+- `resources/js/components/ComplaintForm.vue` (updated import paths)
+- `resources/js/pages/user/ComplaintsPage.vue` (fixed RouterLink import)
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
 - `resources/js/pages/admin/AdminDashboardPage.vue`
 - `resources/js/pages/user/UserDashboardPage.vue`
 - `resources/js/components/SubmitComplaintButton.vue` (new)
 - `resources/js/components/StatusBadge.vue` (updated)
+<<<<<<< HEAD
 - `resources/js/layouts/AppShell.vue` (updated via template modifications)
+=======
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
 
 ## Next Steps
 - User can now run `npm run dev` to see the redesigned interface
 - Consider adding chart visualization improvements if needed
+<<<<<<< HEAD
 - Review accessibility scores and adjust contrast if required
+=======
+- Review accessibility scores and adjust contrast if required
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9

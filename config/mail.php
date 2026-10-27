@@ -112,7 +112,11 @@ return [
 
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+<<<<<<< HEAD
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Campus Complaint Management System')),
+=======
+        'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
     ],
 
 ];

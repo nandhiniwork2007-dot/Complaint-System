@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
     <GuestLayout title="Create account" subtitle="Start submitting and tracking complaints online.">
         <form class="mt-8 grid gap-4" @submit.prevent="submit">
             <div class="grid gap-4">
@@ -39,6 +40,75 @@
             Already registered?
             <RouterLink to="/login" class="font-semibold text-indigo-600 hover:text-indigo-700">Login here</RouterLink>
         </p>
+=======
+    <GuestLayout
+        title="Create account"
+        subtitle="Start submitting and tracking complaints online."
+        variant="Create your account"
+        :steps="registrationSteps"
+        :step="1"
+    >
+        <template #content>
+            <form class="mt-10 grid gap-4" @submit.prevent="submit">
+                <Input
+                    v-model="form.name"
+                    label="Full name"
+                    name="name"
+                    placeholder="Alex Rivera"
+                    :error="error('name')"
+                    required
+                    autocomplete="name"
+                />
+                <Input
+                    v-model="form.email"
+                    label="Email address"
+                    type="email"
+                    name="email"
+                    placeholder="you@company.com"
+                    :error="error('email')"
+                    required
+                    autocomplete="email"
+                />
+                <Input
+                    v-model="form.phone"
+                    label="Phone number"
+                    name="phone"
+                    placeholder="+1 (555) 000-0000"
+                    autocomplete="tel"
+                />
+                <Input
+                    v-model="form.password"
+                    label="Password"
+                    type="password"
+                    name="password"
+                    placeholder="••••••••"
+                    :error="error('password')"
+                    required
+                    autocomplete="new-password"
+                />
+                <Input
+                    v-model="form.password_confirmation"
+                    label="Confirm password"
+                    type="password"
+                    name="password_confirmation"
+                    placeholder="••••••••"
+                    :error="error('password_confirmation')"
+                    required
+                    autocomplete="new-password"
+                />
+                <Button type="submit" variant="primary" :loading="loading" class="w-full">
+                    {{ loading ? 'Creating account...' : 'Create account' }}
+                </Button>
+            </form>
+
+            <div class="mt-10 border-t border-surface-border pt-6">
+                <p class="text-sm text-text-secondary text-center">
+                    Already registered?{{ ' ' }}
+                    <RouterLink class="font-medium text-primary hover:text-primary-dark" to="/login">Sign in</RouterLink>
+                </p>
+            </div>
+        </template>
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
     </GuestLayout>
 </template>
 
@@ -46,6 +116,11 @@
 import { reactive, ref } from 'vue';
 import { useRouter, RouterLink } from 'vue-router';
 import GuestLayout from '../../layouts/GuestLayout.vue';
+<<<<<<< HEAD
+=======
+import Input from '../../components/Input.vue';
+import Button from '../../components/Button.vue';
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
 import { useAuthStore } from '../../stores/auth';
 import { useToastStore } from '../../stores/toasts';
 
@@ -56,6 +131,11 @@ const loading = ref(false);
 const errors = ref({});
 const form = reactive({ name: '', email: '', phone: '', password: '', password_confirmation: '' });
 
+<<<<<<< HEAD
+=======
+const registrationSteps = ['Create account', 'Verify email', 'Get started'];
+
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
 function error(key) {
     return errors.value[key]?.[0] ?? '';
 }
@@ -71,7 +151,11 @@ async function submit() {
             const message = data.mail_error ? `${data.mail_warning} ${data.mail_error}` : data.mail_warning;
             toast.error(message);
         } else {
+<<<<<<< HEAD
             toast.success('Registration completed. Check your inbox for the verification link.');
+=======
+            toast.success('Account created. Check your inbox to verify your email.');
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
         }
 
         router.push('/verify-email');
@@ -81,4 +165,8 @@ async function submit() {
         loading.value = false;
     }
 }
+<<<<<<< HEAD
 </script>
+=======
+</script>
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9

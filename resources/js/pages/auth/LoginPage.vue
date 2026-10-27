@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
     <GuestLayout title="Welcome back" subtitle="Sign in to track and manage your complaints.">
         <form class="mt-8 grid gap-4" @submit.prevent="submit">
             <label class="grid gap-2">
@@ -25,6 +26,46 @@
         <div class="mt-4 text-center">
             <RouterLink to="/forgot-password" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">Forgot your password?</RouterLink>
         </div>
+=======
+    <GuestLayout title="Sign in" subtitle="Access your portal to track and manage your complaints." variant="Sign in to your account">
+        <template #content>
+            <form class="mt-10 grid gap-4" @submit.prevent="submit">
+                <Input
+                    v-model="form.email"
+                    label="Email address"
+                    type="email"
+                    name="email"
+                    placeholder="you@company.com"
+                    :error="error('email')"
+                    required
+                    autocomplete="email"
+                />
+                <Input
+                    v-model="form.password"
+                    label="Password"
+                    type="password"
+                    name="password"
+                    placeholder="••••••••"
+                    :error="error('password')"
+                    required
+                    autocomplete="current-password"
+                />
+                <Button type="submit" variant="primary" :loading="loading" class="w-full">
+                    {{ loading ? 'Signing in...' : 'Sign in' }}
+                </Button>
+            </form>
+
+            <div class="mt-10 border-t border-surface-border pt-6">
+                <p class="text-sm text-text-secondary text-center">
+                    Don't have an account?{{ ' ' }}
+                    <RouterLink class="font-medium text-primary hover:text-primary-dark" to="/register">Create one</RouterLink>
+                </p>
+                <p class="mt-3 text-sm text-text-secondary text-center">
+                    <RouterLink class="text-primary hover:text-primary-dark" to="/forgot-password">Forgot your password?</RouterLink>
+                </p>
+            </div>
+        </template>
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
     </GuestLayout>
 </template>
 
@@ -32,6 +73,11 @@
 import { reactive, ref } from 'vue';
 import { useRouter, RouterLink } from 'vue-router';
 import GuestLayout from '../../layouts/GuestLayout.vue';
+<<<<<<< HEAD
+=======
+import Input from '../../components/Input.vue';
+import Button from '../../components/Button.vue';
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
 import { useAuthStore } from '../../stores/auth';
 
 const auth = useAuthStore();

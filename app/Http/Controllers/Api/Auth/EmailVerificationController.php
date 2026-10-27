@@ -52,4 +52,8 @@ class EmailVerificationController extends Controller
             'user' => $request->user() ? new UserResource($request->user()) : null,
         ]);
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9

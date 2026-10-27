@@ -2,11 +2,19 @@
 
 namespace Database\Factories;
 
+<<<<<<< HEAD
+=======
+use App\Models\ComplaintCategory;
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
+<<<<<<< HEAD
  * @extends Factory<\App\Models\ComplaintCategory>
+=======
+ * @extends Factory<ComplaintCategory>
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
  */
 class ComplaintCategoryFactory extends Factory
 {

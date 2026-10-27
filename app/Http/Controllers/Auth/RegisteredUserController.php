@@ -42,4 +42,8 @@ class RegisteredUserController extends Controller
             'user' => new UserResource($user),
         ], 201);
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9

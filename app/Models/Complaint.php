@@ -3,16 +3,29 @@
 namespace App\Models;
 
 use App\Policies\ComplaintPolicy;
+<<<<<<< HEAD
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
+=======
+use Database\Factories\ComplaintFactory;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
 
 #[UsePolicy(ComplaintPolicy::class)]
 class Complaint extends Model
 {
+<<<<<<< HEAD
     /** @use HasFactory<\Database\Factories\ComplaintFactory> */
+=======
+    /** @use HasFactory<ComplaintFactory> */
+>>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
     use HasFactory;
 
     public const STATUS_PENDING = 'pending';
