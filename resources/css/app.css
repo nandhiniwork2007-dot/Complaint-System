@@ -1,0 +1,74 @@
+@import url('https://fonts.bunny.net/css?family=figtree:400,500,600,700');
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../**/*.vue';
+
+@theme {
+    --font-sans: 'Figtree', 'Segoe UI Variable Text', ui-sans-serif, sans-serif;
+
+    /* Colors */
+    --color-navy-950: #0a1226;
+    --color-navy-900: #0f1b3a;
+    --color-navy-800: #16254d;
+    --color-navy-700: #1f3166;
+    --color-navy-600: #2a418a;
+    --color-navy-500: #3454b3;
+    --color-navy-400: #4a6ec8;
+    --color-navy-300: #7090e0;
+    --color-navy-200: #a1b8f0;
+    --color-navy-100: #c8d7f8;
+    --color-navy-50: #e7eefb;
+
+    --color-indigo-50: #f0f5ff;
+    --color-indigo-100: #e0eaff;
+    --color-indigo-200: #c7d7fe;
+    --color-indigo-300: #a4bcfd;
+    --color-indigo-400: #8098ff;
+    --color-indigo-500: #6079ff;
+    --color-indigo-600: #445eff;
+    --color-indigo-700: #3348db;
+    --color-indigo-800: #2b3cb3;
+    --color-indigo-900: #22308a;
+    --color-indigo-950: #161e55;
+
+    --color-slate-50: #f8fafc;
+    --color-slate-100: #f1f5f9;
+    --color-slate-200: #e2e8f0;
+    --color-slate-300: #cbd5e1;
+    --color-slate-400: #94a3b8;
+    --color-slate-500: #64748b;
+    --color-slate-600: #475569;
+    --color-slate-700: #334155;
+    --color-slate-800: #1e293b;
+    --color-slate-900: #0f172a;
+    --color-slate-950: #020617;
+
+    /* Status Colors */
+    --status-pending: #fbbf24;
+    --status-in-progress: #6079ff;
+    --status-resolved: #10b981;
+    --status-rejected: #ef4444;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: #f8fafc;
+    color: #0f172a;
+}
+
+/* Clear keyboard focus for every interactive element */
+:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
