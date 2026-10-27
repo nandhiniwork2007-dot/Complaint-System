@@ -18,9 +18,9 @@
             </template>
         </div>
 
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
-                <h1 class="text-xl font-semibold text-text-main tracking-tight">{{ title }}</h1>
+                <h1 class="text-2xl font-semibold leading-tight tracking-tight text-text-main sm:text-3xl">{{ title }}</h1>
                 <p v-if="subtitle" class="text-sm text-text-secondary mt-0.5">{{ subtitle }}</p>
             </div>
 

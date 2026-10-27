@@ -15,11 +15,7 @@ class CategoryRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-<<<<<<< HEAD
-        if ($this->filled('name') && !$this->filled('slug')) {
-=======
         if ($this->filled('name') && ! $this->filled('slug')) {
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
             $this->merge(['slug' => Str::slug($this->string('name')->value())]);
         }
     }

@@ -1,11 +1,4 @@
 <template>
-<<<<<<< HEAD
-    <div class="pointer-events-none fixed right-4 top-4 z-50 grid w-full max-w-sm gap-3">
-        <div v-for="toast in store.items" :key="toast.id" class="rounded-2xl px-4 py-3 text-sm font-medium shadow-xl"
-            :class="toast.type === 'error' ? 'bg-rose-600 text-white' : 'bg-slate-950 text-white'">
-            {{ toast.message }}
-        </div>
-=======
     <div class="pointer-events-none fixed top-4 right-4 z-50 grid w-full max-w-[420px] gap-3">
         <transition-group name="toast" class="flex flex-col gap-3">
             <div
@@ -52,7 +45,6 @@
                 </div>
             </div>
         </transition-group>
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
     </div>
 </template>
 
@@ -60,9 +52,6 @@
 import { useToastStore } from '../stores/toasts';
 
 const store = useToastStore();
-<<<<<<< HEAD
-</script>
-=======
 
 function dismiss(id) {
     store.items = store.items.filter((item) => item.id !== id);
@@ -85,4 +74,3 @@ function dismiss(id) {
     padding: 0;
 }
 </style>
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9

@@ -33,11 +33,7 @@ class ComplaintResource extends JsonResource
                 'name' => $this->assignee->name,
                 'email' => $this->assignee->email,
             ] : null,
-<<<<<<< HEAD
-            'attachments' => $this->attachments->map(fn($attachment) => [
-=======
             'attachments' => $this->attachments->map(fn ($attachment) => [
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
                 'id' => $attachment->id,
                 'name' => $attachment->original_name,
                 'mime_type' => $attachment->mime_type,
@@ -45,11 +41,7 @@ class ComplaintResource extends JsonResource
                 'download_url' => url("/api/complaints/{$this->id}/attachments/{$attachment->id}"),
             ])->values(),
             'messages' => ComplaintMessageResource::collection($this->whenLoaded('messages')),
-<<<<<<< HEAD
-            'audit_logs' => $this->when($request->user()?->isStaff(), fn() => $this->auditLogs->map(fn($log) => [
-=======
             'audit_logs' => $this->when($request->user()?->isStaff(), fn () => $this->auditLogs->map(fn ($log) => [
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
                 'id' => $log->id,
                 'action' => $log->action,
                 'description' => $log->description,

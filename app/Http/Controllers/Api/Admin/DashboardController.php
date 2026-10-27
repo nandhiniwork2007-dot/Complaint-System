@@ -5,10 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ComplaintResource;
 use App\Models\Complaint;
-<<<<<<< HEAD
 use App\Models\ComplaintCategory;
-=======
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -35,10 +32,7 @@ class DashboardController extends Controller
             ],
             'selected_period' => $period,
             'trend' => $this->buildTrend($period),
-<<<<<<< HEAD
             'category_breakdown' => $this->buildCategoryBreakdown(),
-=======
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
             'recent_complaints' => ComplaintResource::collection(
                 Complaint::query()
                     ->with(['category', 'assignee', 'attachments', 'user'])
@@ -49,7 +43,6 @@ class DashboardController extends Controller
         ]);
     }
 
-<<<<<<< HEAD
     protected function buildCategoryBreakdown(): array
     {
         $totals = Complaint::query()
@@ -70,8 +63,6 @@ class DashboardController extends Controller
             ->all();
     }
 
-=======
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
     protected function buildTrend(string $period): array
     {
         return match ($period) {
@@ -88,11 +79,7 @@ class DashboardController extends Controller
         $totals = $this->countComplaintsByBucket(
             $start,
             $start->endOfDay(),
-<<<<<<< HEAD
-            fn(CarbonImmutable $date) => $date->startOfHour()->format('Y-m-d H:00')
-=======
             fn (CarbonImmutable $date) => $date->startOfHour()->format('Y-m-d H:00')
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
         );
         $buckets = [];
 
@@ -117,11 +104,7 @@ class DashboardController extends Controller
         $totals = $this->countComplaintsByBucket(
             $start,
             $end,
-<<<<<<< HEAD
-            fn(CarbonImmutable $date) => $date->toDateString()
-=======
             fn (CarbonImmutable $date) => $date->toDateString()
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
         );
         $buckets = [];
 
@@ -146,11 +129,7 @@ class DashboardController extends Controller
         $totals = $this->countComplaintsByBucket(
             $start,
             $end,
-<<<<<<< HEAD
-            fn(CarbonImmutable $date) => $date->toDateString()
-=======
             fn (CarbonImmutable $date) => $date->toDateString()
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
         );
         $buckets = [];
 
@@ -174,11 +153,7 @@ class DashboardController extends Controller
         $totals = $this->countComplaintsByBucket(
             $start,
             $start->endOfYear(),
-<<<<<<< HEAD
-            fn(CarbonImmutable $date) => $date->format('Y-m')
-=======
             fn (CarbonImmutable $date) => $date->format('Y-m')
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
         );
         $buckets = [];
 

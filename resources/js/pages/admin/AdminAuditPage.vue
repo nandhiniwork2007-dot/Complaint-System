@@ -1,11 +1,5 @@
 <template>
     <AppShell section="admin" title="Audit History" subtitle="A read-only record of important actions taken in the system.">
-    <template #header>
-        <div class="flex flex-col gap-1">
-            <h1 class="text-2xl font-bold text-slate-900">Audit History</h1>
-            <p class="text-sm text-slate-500">A read-only record of important actions taken in the system.</p>
-        </div>
-    </template>
         <section class="rounded-xl border border-slate-200 bg-white shadow-sm">
             <form class="flex flex-wrap items-center gap-3 border-b border-slate-100 px-5 py-4" role="search" @submit.prevent="applySearch">
                 <div class="relative min-w-[16rem] flex-1">

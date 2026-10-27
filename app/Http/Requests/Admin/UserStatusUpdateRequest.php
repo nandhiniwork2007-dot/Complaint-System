@@ -23,11 +23,7 @@ class UserStatusUpdateRequest extends FormRequest
                     User::ROLE_MANAGER,
                     User::ROLE_SUPPORT_AGENT,
                     User::ROLE_USER,
-<<<<<<< HEAD
-                ])
-=======
                 ]),
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
             ],
             'is_active' => ['required', 'boolean'],
         ];

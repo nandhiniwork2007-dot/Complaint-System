@@ -1,21 +1,4 @@
 <template>
-<<<<<<< HEAD
-    <GuestLayout title="Verify email" subtitle="Certain actions are locked until your email is verified.">
-        <div class="mt-8 grid gap-4 text-sm text-slate-200">
-            <p v-if="verified" class="rounded-2xl bg-emerald-500/20 px-4 py-3 text-emerald-200">Your email is verified. You can continue to the portal.</p>
-            <p v-else class="rounded-2xl bg-white/10 px-4 py-3">Check your inbox for the verification link. If you did not receive it, request another email below.</p>
-            <p v-if="notice" class="rounded-2xl bg-white/10 px-4 py-3">{{ notice }}</p>
-            <button v-if="!verified"
-                class="rounded-full bg-teal-400 px-5 py-3 text-sm font-semibold text-slate-950 cursor-pointer"
-                @click="resend">Resend verification email</button>
-            <button
-                class="inline-flex rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white cursor-pointer"
-                @click="continueToPortal">{{ verified ? 'Continue to portal' : 'Refresh verification status' }}</button>
-            <button
-                class="inline-flex rounded-full border border-rose-300 px-5 py-3 text-sm font-semibold text-rose-200 cursor-pointer"
-                @click="logout">Sign out</button>
-        </div>
-=======
     <GuestLayout
         title="Verify your email"
         subtitle="Confirm your email address to unlock the portal."
@@ -80,20 +63,11 @@
                 </button>
             </div>
         </template>
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
     </GuestLayout>
 </template>
 
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-<<<<<<< HEAD
-import axios from 'axios';
-import { useRoute, useRouter } from 'vue-router';
-import GuestLayout from '../../layouts/GuestLayout.vue';
-import { useAuthStore } from '../../stores/auth';
-import { useToastStore } from '../../stores/toasts';
-import { extractMessage } from '../../utils/http';
-=======
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import GuestLayout from '../../layouts/GuestLayout.vue';
@@ -102,7 +76,6 @@ import { useAuthStore } from '../../stores/auth';
 import { useToastStore } from '../../stores/toasts';
 import { extractMessage } from '../../utils/http';
 import { LogOutIcon } from '@lucide/vue';
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
 
 const auth = useAuthStore();
 const route = useRoute();
@@ -110,14 +83,6 @@ const router = useRouter();
 const toast = useToastStore();
 const verified = computed(() => !!auth.user?.email_verified_at);
 const notice = ref('');
-<<<<<<< HEAD
-
-async function refreshStatus(showSuccess = false) {
-    await auth.refresh();
-
-    if (verified.value && showSuccess) {
-        toast.success('Email verified successfully.');
-=======
 const resending = ref(false);
 const verifying = ref(false);
 
@@ -134,7 +99,6 @@ async function refreshStatus(showSuccess = false) {
         toast.error(extractMessage(error, 'Unable to refresh verification status.'));
     } finally {
         verifying.value = false;
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
     }
 }
 
@@ -151,10 +115,7 @@ onMounted(async () => {
 });
 
 async function resend() {
-<<<<<<< HEAD
-=======
     resending.value = true;
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
     try {
         const { data } = await axios.post('/api/auth/email/verification-notification');
         notice.value = data.mail_error ? `${data.message} ${data.mail_error}` : data.message;
@@ -162,21 +123,12 @@ async function resend() {
     } catch (error) {
         notice.value = extractMessage(error, 'Unable to resend verification email.');
         const mailError = error?.response?.data?.mail_error;
-<<<<<<< HEAD
-
-        if (mailError) {
-            notice.value = `${notice.value} ${mailError}`;
-        }
-
-        toast.error(notice.value);
-=======
         if (mailError) {
             notice.value = `${notice.value} ${mailError}`;
         }
         toast.error(notice.value);
     } finally {
         resending.value = false;
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
     }
 }
 
@@ -204,8 +156,4 @@ async function logout() {
         toast.error(extractMessage(error, 'Unable to sign out right now.'));
     }
 }
-<<<<<<< HEAD
 </script>
-=======
-</script>
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9

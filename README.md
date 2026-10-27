@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 # Campus Complaint Management System
-=======
-# Complaint Management System
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
 
 A production-oriented Complaint Management System built with Laravel 12, Sanctum, and Vue 3 SPA architecture.
 
@@ -300,12 +296,8 @@ php artisan test --compact
 
 ## 📄 License
 
-<<<<<<< HEAD
 This project is provided for application use and development purposes within this workspace.
 
 ## 🙏 Attribution
 
 This project is built on the open-source [Laravel](https://laravel.com) framework and other third-party packages (Vue, Pinia, Tailwind CSS, Vite, Laravel Sanctum and others), each distributed under its own license. Their license and copyright notices are preserved in `vendor/` and `node_modules/` and in the packages' own repositories. This project was adapted from an existing Complaint Management System codebase; original copyright and license terms continue to apply to any code derived from it.
-=======
-This project is provided for application use and development purposes within this workspace.
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9

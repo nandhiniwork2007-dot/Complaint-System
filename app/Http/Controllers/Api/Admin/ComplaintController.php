@@ -17,7 +17,6 @@ use Throwable;
 
 class ComplaintController extends Controller
 {
-<<<<<<< HEAD
     protected const SORTABLE = ['created_at', 'submitted_at', 'title', 'reference', 'status', 'priority'];
 
     public function index(Request $request): JsonResponse
@@ -25,10 +24,6 @@ class ComplaintController extends Controller
         $sort = in_array($request->input('sort'), self::SORTABLE, true) ? $request->input('sort') : 'created_at';
         $direction = $request->input('direction') === 'asc' ? 'asc' : 'desc';
 
-=======
-    public function index(Request $request): JsonResponse
-    {
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
         $paginator = Complaint::query()
             ->with(['category', 'assignee', 'attachments', 'user'])
             ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')->value()))
@@ -43,14 +38,10 @@ class ComplaintController extends Controller
                         ->orWhereHas('user', fn ($userQuery) => $userQuery->where('name', 'like', "%{$search}%"));
                 });
             })
-<<<<<<< HEAD
             ->when($request->filled('from'), fn ($query) => $query->whereDate('created_at', '>=', $request->date('from')))
             ->when($request->filled('to'), fn ($query) => $query->whereDate('created_at', '<=', $request->date('to')))
             ->orderBy($sort, $direction)
             ->orderByDesc('id')
-=======
-            ->latest()
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
             ->paginate(12)
             ->withQueryString();
 
@@ -131,8 +122,4 @@ class ComplaintController extends Controller
             'data' => new ComplaintResource($complaint->fresh()->load(['category', 'assignee', 'attachments', 'messages.user', 'auditLogs.user', 'user'])),
         ]);
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9

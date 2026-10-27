@@ -53,8 +53,4 @@ class AdminCategoryApiTest extends TestCase
             'id' => $category->id,
         ]);
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9

@@ -94,8 +94,4 @@ class AdminComplaintApiTest extends TestCase
             ->assertJsonPath('data.messages.0.message', 'We need one more document from you.')
             ->assertJsonPath('data.messages.1.message', 'Requested additional evidence.');
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9

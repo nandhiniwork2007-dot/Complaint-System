@@ -6,10 +6,7 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
-<<<<<<< HEAD
 use Illuminate\Http\Request;
-=======
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api/auth')->group(function () {
@@ -26,17 +23,11 @@ Route::prefix('api/auth')->group(function () {
     });
 });
 
-<<<<<<< HEAD
 Route::get('/reset-password/{token}', function (Request $request, string $token) {
     $email = $request->query('email');
     $query = $email ? '?email='.urlencode((string) $email) : '';
 
     return redirect('/reset-password/'.$token.$query);
-=======
-// Named for the password-reset mail URL; the SPA reads {token} and ?email= from the browser URL.
-Route::get('/reset-password/{token}', function () {
-    return view('app');
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
 })->middleware('guest')->name('password.reset');
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
@@ -46,8 +37,4 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
 Route::view('/{any?}', 'app')
-<<<<<<< HEAD
     ->where('any', '^(?!api|sanctum|storage).*$');
-=======
-    ->where('any', '^(?!api|sanctum|storage).*$');
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9

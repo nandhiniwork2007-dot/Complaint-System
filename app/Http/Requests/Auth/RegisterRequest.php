@@ -3,10 +3,6 @@
 namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
-<<<<<<< HEAD
-use Illuminate\Validation\Rule;
-=======
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
 
 class RegisterRequest extends FormRequest
 {

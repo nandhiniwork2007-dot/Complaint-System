@@ -1,10 +1,7 @@
 <?php
 
-<<<<<<< HEAD
 use App\Http\Controllers\Api\Admin\AnalyticsController as AdminAnalyticsController;
 use App\Http\Controllers\Api\Admin\AuditLogController as AdminAuditLogController;
-=======
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
 use App\Http\Controllers\Api\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Api\Admin\ComplaintController as AdminComplaintController;
 use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
@@ -34,11 +31,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('admin')->middleware('staff')->group(function () {
         Route::get('/dashboard', AdminDashboardController::class);
-<<<<<<< HEAD
         Route::get('/analytics', AdminAnalyticsController::class);
         Route::get('/audit-logs', [AdminAuditLogController::class, 'index']);
-=======
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
         Route::get('/complaints', [AdminComplaintController::class, 'index']);
         Route::get('/complaints/{complaint}', [AdminComplaintController::class, 'show']);
         Route::patch('/complaints/{complaint}', [AdminComplaintController::class, 'update']);

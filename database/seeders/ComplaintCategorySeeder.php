@@ -25,11 +25,7 @@ class ComplaintCategorySeeder extends Seeder
                     'name' => $category['name'],
                     'slug' => Str::slug($category['name']),
                     'type' => $category['type'],
-<<<<<<< HEAD
-                    'description' => $category['name'] . ' related complaints.',
-=======
                     'description' => $category['name'].' related complaints.',
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
                     'is_active' => true,
                     'sort_order' => $index + 1,
                 ]

@@ -76,11 +76,7 @@ return [
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),
-<<<<<<< HEAD
             'username' => env('LOG_SLACK_USERNAME', env('APP_NAME', 'Campus Complaint Management System')),
-=======
-            'username' => env('LOG_SLACK_USERNAME', env('APP_NAME', 'Laravel')),
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
             'emoji' => env('LOG_SLACK_EMOJI', ':boom:'),
             'level' => env('LOG_LEVEL', 'critical'),
             'replace_placeholders' => true,

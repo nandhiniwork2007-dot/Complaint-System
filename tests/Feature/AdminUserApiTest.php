@@ -74,8 +74,4 @@ class AdminUserApiTest extends TestCase
 
         Notification::assertSentTo($user, ResetPassword::class);
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> df2d90b452a91bf8ff706f9c24fab051085173d9
