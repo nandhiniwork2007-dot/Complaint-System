@@ -23,7 +23,7 @@ import AdminAuditPage from '../pages/admin/AdminAuditPage.vue';
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        { path: '/', redirect: '/dashboard' },
+        { path: '/', redirect: '/login' },
         { path: '/login', component: LoginPage, meta: { guest: true } },
         { path: '/register', component: RegisterPage, meta: { guest: true } },
         { path: '/forgot-password', component: ForgotPasswordPage, meta: { guest: true } },
@@ -49,7 +49,7 @@ router.beforeEach(async (to) => {
     const auth = useAuthStore(pinia);
     await auth.initialize();
 
-    if (to.meta.guest && auth.isAuthenticated) {
+    if (to.meta.guest && auth.isAuthenticated && auth.user?.email_verified_at) {
         return auth.isStaff ? '/admin/dashboard' : '/dashboard';
     }
 
