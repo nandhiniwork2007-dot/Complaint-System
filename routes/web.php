@@ -27,7 +27,9 @@ Route::view('/reset-password/{token}', 'app')
     ->name('password.reset');
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
+    if (! $request->user()->hasVerifiedEmail()) {
+        $request->fulfill();
+    }
 
     return redirect('/verify-email?verified=1');
 })->middleware(['auth', 'signed'])->name('verification.verify');

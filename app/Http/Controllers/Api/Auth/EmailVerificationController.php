@@ -36,8 +36,7 @@ class EmailVerificationController extends Controller
             ]);
 
             return response()->json([
-                'message' => 'Verification email could not be sent from this server. Check SMTP access and Mailtrap settings.',
-                'mail_error' => $exception->getMessage(),
+                'message' => 'Verification email could not be sent. Check the server mail configuration and try again later.',
             ], 500);
         }
 

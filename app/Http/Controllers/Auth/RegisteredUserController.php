@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -17,10 +18,9 @@ class RegisteredUserController extends Controller
     {
         $user = User::query()->create($request->validated());
         $mailWarning = null;
-        $mailError = null;
 
         try {
-            $user->sendEmailVerificationNotification();
+            event(new Registered($user));
         } catch (Throwable $exception) {
             Log::channel('single')->error('Verification email could not be sent after registration.', [
                 'user_id' => $user->id,
@@ -29,7 +29,6 @@ class RegisteredUserController extends Controller
             ]);
 
             $mailWarning = 'Account created, but the verification email could not be sent from this server.';
-            $mailError = $exception->getMessage();
         }
 
         Auth::login($user);
@@ -38,7 +37,6 @@ class RegisteredUserController extends Controller
         return response()->json([
             'message' => 'Registration completed successfully.',
             'mail_warning' => $mailWarning,
-            'mail_error' => $mailError,
             'user' => new UserResource($user),
         ], 201);
     }

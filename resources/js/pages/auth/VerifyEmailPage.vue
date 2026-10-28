@@ -91,6 +91,7 @@ const registrationSteps = ['Create account', 'Verify email', 'Get started'];
 async function refreshStatus(showSuccess = false) {
     verifying.value = true;
     try {
+        await axios.get('/api/auth/email/status');
         await auth.refresh();
         if (verified.value && showSuccess) {
             toast.success('Email verified successfully.');
@@ -102,30 +103,16 @@ async function refreshStatus(showSuccess = false) {
     }
 }
 
-onMounted(async () => {
-    try {
-        await refreshStatus(route.query.verified === '1');
-
-        if (route.query.verified === '1') {
-            notice.value = 'Your email has been verified. You can continue now.';
-        }
-    } catch (error) {
-        toast.error(extractMessage(error, 'Unable to refresh verification status.'));
-    }
-});
+x
 
 async function resend() {
     resending.value = true;
     try {
         const { data } = await axios.post('/api/auth/email/verification-notification');
-        notice.value = data.mail_error ? `${data.message} ${data.mail_error}` : data.message;
+        notice.value = data.message;
         toast.success(data.message);
     } catch (error) {
         notice.value = extractMessage(error, 'Unable to resend verification email.');
-        const mailError = error?.response?.data?.mail_error;
-        if (mailError) {
-            notice.value = `${notice.value} ${mailError}`;
-        }
         toast.error(notice.value);
     } finally {
         resending.value = false;
