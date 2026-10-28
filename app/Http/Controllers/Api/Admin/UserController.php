@@ -64,13 +64,11 @@ class UserController extends Controller
         } catch (Throwable $exception) {
             Log::channel('single')->error('Password reset email failed.', [
                 'user_id' => $user->id,
-                'email' => $user->email,
-                'message' => $exception->getMessage(),
+                'exception' => $exception::class,
             ]);
 
             return response()->json([
                 'message' => 'Password reset email could not be sent from this server.',
-                'mail_error' => $exception->getMessage(),
             ], 500);
         }
 

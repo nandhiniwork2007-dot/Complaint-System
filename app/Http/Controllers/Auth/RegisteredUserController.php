@@ -24,8 +24,7 @@ class RegisteredUserController extends Controller
         } catch (Throwable $exception) {
             Log::channel('single')->error('Verification email could not be sent after registration.', [
                 'user_id' => $user->id,
-                'email' => $user->email,
-                'message' => $exception->getMessage(),
+                'exception' => $exception::class,
             ]);
 
             $mailWarning = 'Account created, but the verification email could not be sent from this server.';

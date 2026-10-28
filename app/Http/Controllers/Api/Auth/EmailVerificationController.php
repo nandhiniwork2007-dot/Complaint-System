@@ -31,8 +31,7 @@ class EmailVerificationController extends Controller
         } catch (Throwable $exception) {
             Log::channel('single')->error('Verification email resend failed.', [
                 'user_id' => $request->user()?->id,
-                'email' => $request->user()?->email,
-                'message' => $exception->getMessage(),
+                'exception' => $exception::class,
             ]);
 
             return response()->json([
