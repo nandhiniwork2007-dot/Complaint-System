@@ -140,12 +140,14 @@ class ComplaintController extends Controller
 
     protected function storeAttachments(Request $request, Complaint $complaint): void
     {
+        $disk = (string) config('filesystems.default');
+
         foreach ($request->file('attachments', []) as $file) {
-            $path = $file->store('complaints/'.$complaint->id, 'local');
+            $path = $file->store('complaints/'.$complaint->id, $disk);
 
             $complaint->attachments()->create([
                 'user_id' => $request->user()->id,
-                'disk' => 'local',
+                'disk' => $disk,
                 'path' => $path,
                 'original_name' => $file->getClientOriginalName(),
                 'mime_type' => $file->getMimeType() ?: 'application/octet-stream',

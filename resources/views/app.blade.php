@@ -7,7 +7,7 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         {{-- app icon --}}
         <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/x-icon">
-        <title>{{ config('app.name', 'Campus Complaint Management System') }}</title>
+        <title>{{ config('app.name', 'Career Next') }}</title>
         <script>
             (() => {
                 try {

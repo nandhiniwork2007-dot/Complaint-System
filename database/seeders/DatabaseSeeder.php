@@ -19,16 +19,18 @@ class DatabaseSeeder extends Seeder
             SystemSettingSeeder::class,
         ]);
 
-        User::query()->updateOrCreate(
-            ['email' => 'test@example.com'],
-            [
-                'name' => 'Test User',
-                'phone' => '+10000000001',
-                'role' => User::ROLE_USER,
-                'is_active' => true,
-                'email_verified_at' => now(),
-                'password' => Hash::make('password'),
-            ]
-        );
+        if (app()->environment(['local', 'testing'])) {
+            User::query()->updateOrCreate(
+                ['email' => 'test@example.com'],
+                [
+                    'name' => 'Test User',
+                    'phone' => '+10000000001',
+                    'role' => User::ROLE_USER,
+                    'is_active' => true,
+                    'email_verified_at' => now(),
+                    'password' => Hash::make('password'),
+                ]
+            );
+        }
     }
 }

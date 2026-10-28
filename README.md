@@ -1,4 +1,4 @@
-# Campus Complaint Management System
+# Career Next
 
 A production-oriented Complaint Management System built with Laravel 12, Sanctum, and Vue 3 SPA architecture.
 

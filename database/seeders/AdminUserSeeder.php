@@ -13,6 +13,10 @@ class AdminUserSeeder extends Seeder
 
     public function run(): void
     {
+        if (app()->environment('production')) {
+            return;
+        }
+
         User::query()->updateOrCreate(
             ['email' => 'admin@example.com'],
             [

@@ -6,7 +6,6 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api/auth')->group(function () {
@@ -23,12 +22,9 @@ Route::prefix('api/auth')->group(function () {
     });
 });
 
-Route::get('/reset-password/{token}', function (Request $request, string $token) {
-    $email = $request->query('email');
-    $query = $email ? '?email='.urlencode((string) $email) : '';
-
-    return redirect('/reset-password/'.$token.$query);
-})->middleware('guest')->name('password.reset');
+Route::view('/reset-password/{token}', 'app')
+    ->middleware('guest')
+    ->name('password.reset');
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();

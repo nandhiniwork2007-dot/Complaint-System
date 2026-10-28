@@ -2,7 +2,7 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "campus/complaint-management-system",
     "type": "project",
-    "description": "Campus Complaint Management System built with Laravel, Vue 3, Tailwind CSS, Pinia and MySQL.",
+    "description": "Career Next campus complaint management system built with Laravel, Vue 3, Tailwind CSS, Pinia and MySQL.",
     "keywords": ["laravel", "vue", "complaint-management", "campus"],
     "license": "MIT",
     "require": {

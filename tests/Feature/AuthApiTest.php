@@ -13,6 +13,16 @@ class AuthApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_guest_can_open_password_reset_link_without_redirecting_back_to_itself(): void
+    {
+        $this->get(route('password.reset', [
+            'token' => 'reset-token',
+            'email' => 'jane@example.com',
+        ]))
+            ->assertOk()
+            ->assertSee('<div id="app"></div>', false);
+    }
+
     public function test_guest_bootstrap_user_endpoint_returns_null_user(): void
     {
         $this->getJson('/api/auth/user')

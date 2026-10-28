@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Campus Complaint Management System'),
+    'name' => env('APP_NAME', 'Career Next'),
 
     /*
     |--------------------------------------------------------------------------

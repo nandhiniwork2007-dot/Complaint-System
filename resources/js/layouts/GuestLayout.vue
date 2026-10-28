@@ -17,7 +17,7 @@
                             </svg>
                         </div>
                         <div>
-                            <div class="text-sm font-semibold leading-tight text-text-main">Complaint<span class="text-primary">Hub</span></div>
+                            <div class="text-sm font-semibold leading-tight text-text-main">Career <span class="text-primary">Next</span></div>
                             <div class="text-[10px] uppercase tracking-wider text-text-muted">Support Portal</div>
                         </div>
                     </div>
@@ -52,7 +52,7 @@ import ThemeControl from '../components/ThemeControl.vue';
 defineProps({
     title: { type: String, required: true },
     subtitle: { type: String, default: '' },
-    variant: { type: String, default: 'Complaint Hub' },
+    variant: { type: String, default: 'Career Next' },
     steps: { type: Array, default: () => [] },
     step: { type: Number, default: 1 },
 });

@@ -14,7 +14,7 @@
                         </svg>
                     </div>
                     <div>
-                        <div class="text-sm font-bold text-text-main leading-tight tracking-tight">Complaint<span class="text-primary">Hub</span></div>
+                        <div class="text-sm font-bold text-text-main leading-tight tracking-tight">Career <span class="text-primary">Next</span></div>
                         <div class="text-[10px] text-text-muted uppercase tracking-widest font-semibold">Support Portal</div>
                     </div>
                 </div>

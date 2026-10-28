@@ -3,14 +3,48 @@
 namespace Tests\Feature;
 
 use App\Models\Complaint;
+use App\Models\ComplaintAttachment;
 use App\Models\ComplaintCategory;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ComplaintApiTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_complaint_attachments_use_the_configured_filesystem_disk(): void
+    {
+        Storage::fake('public');
+        config(['filesystems.default' => 'public']);
+
+        $user = User::factory()->create([
+            'email_verified_at' => now(),
+        ]);
+        $category = ComplaintCategory::factory()->create();
+
+        $response = $this->actingAs($user)->postJson('/api/complaints', [
+            'title' => 'Evidence upload issue',
+            'complaint_category_id' => $category->id,
+            'description' => 'The attached document provides evidence for this complaint.',
+            'attachments' => [UploadedFile::fake()->create('evidence.pdf', 12, 'application/pdf')],
+        ]);
+
+        $response->assertCreated();
+        $attachment = ComplaintAttachment::query()
+            ->where('complaint_id', $response->json('data.id'))
+            ->firstOrFail();
+
+        $this->assertDatabaseHas('complaint_attachments', [
+            'complaint_id' => $response->json('data.id'),
+            'disk' => 'public',
+            'original_name' => 'evidence.pdf',
+        ]);
+
+        Storage::disk('public')->assertExists($attachment->path);
+    }
 
     public function test_verified_user_can_create_complaint(): void
     {
