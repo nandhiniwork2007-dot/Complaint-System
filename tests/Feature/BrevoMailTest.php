@@ -6,9 +6,12 @@ use App\Models\User;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Symfony\Component\Mailer\Exception\TransportException;
+use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 use Symfony\Component\Mime\Email;
 use Tests\TestCase;
 
@@ -48,6 +51,20 @@ class BrevoMailTest extends TestCase
                 && $request['subject'] === 'Test subject'
                 && $request['htmlContent'] === '<p>Test email body</p>';
         });
+    }
+
+    public function test_smtp_configuration_uses_a_supported_starttls_scheme(): void
+    {
+        config([
+            'mail.default' => 'smtp',
+            'mail.mailers.smtp.scheme' => 'smtp',
+            'mail.mailers.smtp.host' => 'smtp-relay.brevo.com',
+            'mail.mailers.smtp.port' => 587,
+            'mail.mailers.smtp.username' => 'smtp-login',
+            'mail.mailers.smtp.password' => 'smtp-key',
+        ]);
+
+        $this->assertInstanceOf(EsmtpTransport::class, Mail::mailer('smtp')->getSymfonyTransport());
     }
 
     public function test_brevo_transport_throws_when_api_rejects_or_returns_invalid_success_response(): void
@@ -117,6 +134,40 @@ class BrevoMailTest extends TestCase
 
         Http::assertSent(fn ($request): bool => $request['to'][0]['email'] === $user->email
             && str_contains($request['htmlContent'], 'email/verify/'));
+    }
+
+    public function test_verification_resend_uses_a_signed_https_production_url(): void
+    {
+        config(['app.url' => 'https://complaint-system-p1y1.onrender.com']);
+        URL::forceRootUrl('https://complaint-system-p1y1.onrender.com');
+        URL::forceScheme('https');
+
+        $user = User::factory()->unverified()->create();
+        Http::fake([
+            'api.brevo.com/v3/smtp/email' => Http::response(['messageId' => 'verification-resend-id'], 201),
+        ]);
+
+        $this->actingAs($user)->postJson('/api/auth/email/verification-notification')->assertOk();
+
+        $message = Http::recorded()->first()[0]['htmlContent'];
+        preg_match('~https://complaint-system-p1y1\.onrender\.com/email/verify/[^"<>\s]+~', html_entity_decode($message), $matches);
+
+        $this->assertNotEmpty($matches[0] ?? null);
+        $this->assertTrue(URL::hasValidSignature(Request::create($matches[0])));
+    }
+
+    public function test_failed_verification_delivery_returns_a_safe_service_unavailable_response(): void
+    {
+        $user = User::factory()->unverified()->create();
+        Http::fake([
+            'api.brevo.com/v3/smtp/email' => Http::response(['message' => 'rejected test-api-key'], 401),
+        ]);
+
+        $this->actingAs($user)->postJson('/api/auth/email/verification-notification')
+            ->assertStatus(503)
+            ->assertJson(['message' => 'Verification email could not be sent. Check the server mail configuration and try again later.'])
+            ->assertDontSee('test-api-key')
+            ->assertDontSee('TransportException');
     }
 
     public function test_password_reset_email_can_be_requested_and_used_through_brevo(): void

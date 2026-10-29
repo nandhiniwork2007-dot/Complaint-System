@@ -36,7 +36,7 @@ class EmailVerificationController extends Controller
 
             return response()->json([
                 'message' => 'Verification email could not be sent. Check the server mail configuration and try again later.',
-            ], 500);
+            ], 503);
         }
 
         return response()->json([
