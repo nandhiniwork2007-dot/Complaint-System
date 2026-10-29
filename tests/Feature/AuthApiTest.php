@@ -2,13 +2,19 @@
 
 namespace Tests\Feature;
 
+use App\Http\Controllers\Api\Auth\EmailVerificationController;
 use App\Models\User;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
+use Mockery;
+use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Tests\TestCase;
 
 class AuthApiTest extends TestCase
@@ -82,6 +88,56 @@ class AuthApiTest extends TestCase
             ->assertJson(['message' => 'Verification link sent.']);
 
         Notification::assertSentTo($user, VerifyEmail::class, 1);
+    }
+
+    public function test_verification_delivery_failure_is_logged_safely_and_returns_generic_service_error(): void
+    {
+        $user = Mockery::mock(User::class)->makePartial();
+        $user->setAttribute('id', 123);
+        $user->shouldReceive('hasVerifiedEmail')->once()->andReturnFalse();
+        $user->shouldReceive('sendEmailVerificationNotification')
+            ->once()
+            ->andThrow(new RuntimeException('SMTP password=secret-smtp api-key:secret-api smtp://smtp-user:uri-secret@smtp.example.com'));
+
+        $request = Request::create('/api/auth/email/verification-notification', 'POST');
+        $request->setUserResolver(fn (): User => $user);
+
+        $logger = Mockery::mock(LoggerInterface::class);
+        $logger->shouldReceive('error')
+            ->once()
+            ->with('Verification email resend failed.', Mockery::on(function (array $context): bool {
+                $this->assertSame(RuntimeException::class, $context['exception']);
+                $this->assertSame(123, $context['user_id']);
+                $this->assertSame('smtp', $context['mailer']);
+                $this->assertSame('smtp-relay.brevo.com', $context['mail_host']);
+                $this->assertSame(587, $context['mail_port']);
+                $this->assertStringContainsString('[redacted]', $context['error']);
+                $this->assertStringNotContainsString('secret-smtp', $context['error']);
+                $this->assertStringNotContainsString('secret-api', $context['error']);
+                $this->assertStringNotContainsString('uri-secret', $context['error']);
+
+                return true;
+            }));
+
+        Log::shouldReceive('error')->once()->andReturnUsing(function (string $message, array $context) use ($logger): void {
+            $logger->error($message, $context);
+        });
+
+        config([
+            'mail.default' => 'smtp',
+            'mail.mailers.smtp.host' => 'smtp-relay.brevo.com',
+            'mail.mailers.smtp.port' => 587,
+            'mail.mailers.smtp.username' => 'smtp-user',
+            'mail.mailers.smtp.password' => 'secret-smtp',
+            'services.brevo.api_key' => 'secret-api',
+        ]);
+
+        $response = app(EmailVerificationController::class)->send($request);
+
+        $this->assertSame(503, $response->getStatusCode());
+        $this->assertSame([
+            'message' => 'Verification email could not be sent. Check the server mail configuration and try again later.',
+        ], $response->getData(true));
     }
 
     public function test_verified_user_is_not_sent_another_verification_email(): void

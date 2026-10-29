@@ -29,9 +29,15 @@ class EmailVerificationController extends Controller
         try {
             $request->user()->sendEmailVerificationNotification();
         } catch (Throwable $exception) {
-            Log::channel('single')->error('Verification email resend failed.', [
+            $mailer = (string) config('mail.default');
+
+            Log::error('Verification email resend failed.', [
                 'user_id' => $request->user()?->id,
+                'mailer' => $mailer,
+                'mail_host' => config("mail.mailers.{$mailer}.host"),
+                'mail_port' => config("mail.mailers.{$mailer}.port"),
                 'exception' => $exception::class,
+                'error' => $this->sanitizeExceptionMessage($exception->getMessage()),
             ]);
 
             return response()->json([
@@ -49,5 +55,28 @@ class EmailVerificationController extends Controller
         return response()->json([
             'user' => $request->user() ? new UserResource($request->user()) : null,
         ]);
+    }
+
+    private function sanitizeExceptionMessage(string $message): string
+    {
+        $secrets = array_values(array_filter([
+            config('mail.mailers.smtp.username'),
+            config('mail.mailers.smtp.password'),
+            config('services.brevo.api_key'),
+        ], static fn (mixed $value): bool => is_string($value) && $value !== ''));
+
+        if ($secrets !== []) {
+            $message = str_replace($secrets, '[redacted]', $message);
+        }
+
+        $message = preg_replace([
+            '/\b(password|passwd|api[-_ ]?key|authorization|bearer|token)(\s*[:=]\s*|\s+)[^\s,;]+/i',
+            '~(://)[^/@\s:]+:[^/@\s]+@~',
+        ], [
+            '$1$2[redacted]',
+            '$1[redacted]@',
+        ], $message) ?? 'Email delivery failed.';
+
+        return mb_substr((string) preg_replace('/[\r\n\t]+/', ' ', $message), 0, 500);
     }
 }
