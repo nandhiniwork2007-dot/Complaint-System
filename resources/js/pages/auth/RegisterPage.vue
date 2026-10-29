@@ -85,7 +85,7 @@ const loading = ref(false);
 const errors = ref({});
 const form = reactive({ name: '', email: '', phone: '', password: '', password_confirmation: '' });
 
-const registrationSteps = ['Create account', 'Verify email', 'Get started'];
+const registrationSteps = ['Create account', 'Get started'];
 
 function error(key) {
     return errors.value[key]?.[0] ?? '';
@@ -96,16 +96,11 @@ async function submit() {
     errors.value = {};
 
     try {
-        const data = await auth.register(form);
+        await auth.register(form);
 
-        if (data.mail_warning) {
-            const message = data.mail_error ? `${data.mail_warning} ${data.mail_error}` : data.mail_warning;
-            toast.error(message);
-        } else {
-            toast.success('Account created. Check your inbox to verify your email.');
-        }
+        toast.success('Account created successfully.');
 
-        router.push('/verify-email');
+        router.push('/dashboard');
     } catch (error) {
         errors.value = error.response?.data?.errors ?? {};
     } finally {

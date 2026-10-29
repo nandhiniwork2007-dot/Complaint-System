@@ -142,7 +142,7 @@ class ResendMailTest extends TestCase
         $this->sendTestEmail();
     }
 
-    public function test_registration_sends_verification_email_through_resend(): void
+    public function test_registration_does_not_send_verification_email(): void
     {
         $this->postJson('/api/auth/register', [
             'name' => 'Jane Doe',
@@ -150,10 +150,12 @@ class ResendMailTest extends TestCase
             'phone' => '1234567890',
             'password' => 'password',
             'password_confirmation' => 'password',
-        ])->assertCreated()->assertJsonPath('mail_warning', null);
+        ])->assertCreated()
+            ->assertJsonMissingPath('mail_warning')
+            ->assertJsonPath('user.email', 'jane@example.com');
 
-        $this->assertSame('jane@example.com', $this->resendClient->emailPayloads[0]['to'][0]);
-        $this->assertStringContainsString('/email/verify/', $this->resendClient->emailPayloads[0]['html']);
+        $this->assertNotNull(User::query()->where('email', 'jane@example.com')->firstOrFail()->email_verified_at);
+        $this->assertSame([], $this->resendClient->emailPayloads);
     }
 
     public function test_verification_resend_uses_the_resend_transport(): void

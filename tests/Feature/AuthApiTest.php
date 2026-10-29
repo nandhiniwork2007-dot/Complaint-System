@@ -39,7 +39,7 @@ class AuthApiTest extends TestCase
             ->assertJson(['user' => null]);
     }
 
-    public function test_user_can_register_via_api(): void
+    public function test_new_user_can_register_and_use_the_account_without_email_verification(): void
     {
         Notification::fake();
 
@@ -52,9 +52,13 @@ class AuthApiTest extends TestCase
         ]);
 
         $response->assertCreated()
-            ->assertJsonPath('user.email', 'jane@example.com');
+            ->assertJsonPath('user.email', 'jane@example.com')
+            ->assertJsonPath('user.email_verified_at', fn (?string $verifiedAt): bool => $verifiedAt !== null)
+            ->assertJsonMissingPath('mail_warning');
 
-        Notification::assertSentTo(User::first(), VerifyEmail::class, 1);
+        $this->assertNotNull(User::firstOrFail()->email_verified_at);
+        Notification::assertNothingSent();
+        $this->getJson('/api/dashboard')->assertOk();
     }
 
     public function test_authenticated_user_can_check_email_verification_status(): void
