@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 use Mockery;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
+use Resend\Exceptions\ErrorException as ResendErrorException;
+use Symfony\Component\Mailer\Exception\TransportException;
 use Tests\TestCase;
 
 class AuthApiTest extends TestCase
@@ -97,7 +98,15 @@ class AuthApiTest extends TestCase
         $user->shouldReceive('hasVerifiedEmail')->once()->andReturnFalse();
         $user->shouldReceive('sendEmailVerificationNotification')
             ->once()
-            ->andThrow(new RuntimeException('SMTP password=secret-smtp api-key:secret-api smtp://smtp-user:uri-secret@smtp.example.com'));
+            ->andThrow(new TransportException(
+                'Provider failure containing private email and message content.',
+                0,
+                new ResendErrorException([
+                    'message' => 'Rejected key secret-api for jane@example.com with message body content.',
+                    'name' => 'invalid_api_key',
+                    'statusCode' => 401,
+                ])
+            ));
 
         $request = Request::create('/api/auth/email/verification-notification', 'POST');
         $request->setUserResolver(fn (): User => $user);
@@ -106,15 +115,15 @@ class AuthApiTest extends TestCase
         $logger->shouldReceive('error')
             ->once()
             ->with('Verification email resend failed.', Mockery::on(function (array $context): bool {
-                $this->assertSame(RuntimeException::class, $context['exception']);
+                $this->assertSame(TransportException::class, $context['exception']);
                 $this->assertSame(123, $context['user_id']);
-                $this->assertSame('smtp', $context['mailer']);
-                $this->assertSame('smtp.gmail.com', $context['mail_host']);
-                $this->assertSame(587, $context['mail_port']);
-                $this->assertStringContainsString('[redacted]', $context['error']);
-                $this->assertStringNotContainsString('secret-smtp', $context['error']);
-                $this->assertStringNotContainsString('secret-api', $context['error']);
-                $this->assertStringNotContainsString('uri-secret', $context['error']);
+                $this->assertSame('resend', $context['mailer']);
+                $this->assertSame(ResendErrorException::class, $context['cause']);
+                $this->assertSame(401, $context['provider_http_status']);
+                $this->assertTrue($context['resend_api_key_configured']);
+                $this->assertArrayNotHasKey('error', $context);
+                $this->assertArrayNotHasKey('email', $context);
+                $this->assertArrayNotHasKey('message', $context);
 
                 return true;
             }));
@@ -124,11 +133,7 @@ class AuthApiTest extends TestCase
         });
 
         config([
-            'mail.default' => 'smtp',
-            'mail.mailers.smtp.host' => 'smtp.gmail.com',
-            'mail.mailers.smtp.port' => 587,
-            'mail.mailers.smtp.username' => 'smtp-user',
-            'mail.mailers.smtp.password' => 'secret-smtp',
+            'mail.default' => 'resend',
             'services.resend.key' => 'secret-api',
         ]);
 

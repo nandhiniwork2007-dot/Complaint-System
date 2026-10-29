@@ -7,6 +7,7 @@ use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Resend\Exceptions\ErrorException as ResendErrorException;
 use Throwable;
 
 class EmailVerificationController extends Controller
@@ -34,10 +35,11 @@ class EmailVerificationController extends Controller
             Log::error('Verification email resend failed.', [
                 'user_id' => $request->user()?->id,
                 'mailer' => $mailer,
-                'mail_host' => config("mail.mailers.{$mailer}.host"),
-                'mail_port' => config("mail.mailers.{$mailer}.port"),
                 'exception' => $exception::class,
-                'error' => $this->sanitizeExceptionMessage($exception->getMessage()),
+                'cause' => $exception->getPrevious() ? $exception->getPrevious()::class : null,
+                'provider_http_status' => $this->providerHttpStatus($exception),
+                'resend_api_key_configured' => is_string(config('services.resend.key'))
+                    && config('services.resend.key') !== '',
             ]);
 
             return response()->json([
@@ -57,26 +59,30 @@ class EmailVerificationController extends Controller
         ]);
     }
 
-    private function sanitizeExceptionMessage(string $message): string
+    private function providerHttpStatus(Throwable $exception): ?int
     {
-        $secrets = array_values(array_filter([
-            config('mail.mailers.smtp.username'),
-            config('mail.mailers.smtp.password'),
-            config('services.resend.key'),
-        ], static fn (mixed $value): bool => is_string($value) && $value !== ''));
+        for ($current = $exception; $current !== null; $current = $current->getPrevious()) {
+            if ($current instanceof ResendErrorException) {
+                $status = $current->getErrorCode();
 
-        if ($secrets !== []) {
-            $message = str_replace($secrets, '[redacted]', $message);
+                if ($status >= 100 && $status <= 599) {
+                    return $status;
+                }
+            }
+
+            if (method_exists($current, 'getResponse')) {
+                $response = $current->getResponse();
+
+                if (is_object($response) && method_exists($response, 'getStatusCode')) {
+                    $status = $response->getStatusCode();
+
+                    if (is_int($status) && $status >= 100 && $status <= 599) {
+                        return $status;
+                    }
+                }
+            }
         }
 
-        $message = preg_replace([
-            '/\b(password|passwd|api[-_ ]?key|authorization|bearer|token)(\s*[:=]\s*|\s+)[^\s,;]+/i',
-            '~(://)[^/@\s:]+:[^/@\s]+@~',
-        ], [
-            '$1$2[redacted]',
-            '$1[redacted]@',
-        ], $message) ?? 'Email delivery failed.';
-
-        return mb_substr((string) preg_replace('/[\r\n\t]+/', ' ', $message), 0, 500);
+        return null;
     }
 }

@@ -60,6 +60,41 @@ class ResendMailTest extends TestCase
         ], $this->resendClient->emailPayloads[0]);
     }
 
+    public function test_resend_configuration_reads_the_api_key_from_the_render_variable(): void
+    {
+        $originalApiKey = getenv('RESEND_API_KEY');
+        $originalEnvironmentValue = $_ENV['RESEND_API_KEY'] ?? null;
+        $originalServerValue = $_SERVER['RESEND_API_KEY'] ?? null;
+        putenv('RESEND_API_KEY=test-render-resend-api-key');
+        $_ENV['RESEND_API_KEY'] = 'test-render-resend-api-key';
+        $_SERVER['RESEND_API_KEY'] = 'test-render-resend-api-key';
+
+        try {
+            $services = require base_path('config/services.php');
+        } finally {
+            if ($originalApiKey === false) {
+                putenv('RESEND_API_KEY');
+            } else {
+                putenv('RESEND_API_KEY='.$originalApiKey);
+            }
+
+            if ($originalEnvironmentValue === null) {
+                unset($_ENV['RESEND_API_KEY']);
+            } else {
+                $_ENV['RESEND_API_KEY'] = $originalEnvironmentValue;
+            }
+
+            if ($originalServerValue === null) {
+                unset($_SERVER['RESEND_API_KEY']);
+            } else {
+                $_SERVER['RESEND_API_KEY'] = $originalServerValue;
+            }
+        }
+
+        $this->assertSame('test-render-resend-api-key', $services['resend']['key']);
+        $this->assertSame('resend', config('mail.mailers.resend.transport'));
+    }
+
     public function test_smtp_configuration_uses_a_supported_starttls_scheme(): void
     {
         config([
