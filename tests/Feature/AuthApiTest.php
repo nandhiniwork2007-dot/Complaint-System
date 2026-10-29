@@ -109,7 +109,7 @@ class AuthApiTest extends TestCase
                 $this->assertSame(RuntimeException::class, $context['exception']);
                 $this->assertSame(123, $context['user_id']);
                 $this->assertSame('smtp', $context['mailer']);
-                $this->assertSame('smtp-relay.brevo.com', $context['mail_host']);
+                $this->assertSame('smtp.gmail.com', $context['mail_host']);
                 $this->assertSame(587, $context['mail_port']);
                 $this->assertStringContainsString('[redacted]', $context['error']);
                 $this->assertStringNotContainsString('secret-smtp', $context['error']);
@@ -125,11 +125,11 @@ class AuthApiTest extends TestCase
 
         config([
             'mail.default' => 'smtp',
-            'mail.mailers.smtp.host' => 'smtp-relay.brevo.com',
+            'mail.mailers.smtp.host' => 'smtp.gmail.com',
             'mail.mailers.smtp.port' => 587,
             'mail.mailers.smtp.username' => 'smtp-user',
             'mail.mailers.smtp.password' => 'secret-smtp',
-            'services.brevo.api_key' => 'secret-api',
+            'services.resend.key' => 'secret-api',
         ]);
 
         $response = app(EmailVerificationController::class)->send($request);

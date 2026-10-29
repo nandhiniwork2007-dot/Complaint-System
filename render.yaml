@@ -46,8 +46,8 @@ services:
       - key: FILESYSTEM_DISK
         value: local
       - key: MAIL_MAILER
-        value: brevo
-      - key: BREVO_API_KEY
+        value: resend
+      - key: RESEND_API_KEY
         sync: false
       - key: MAIL_FROM_ADDRESS
         sync: false

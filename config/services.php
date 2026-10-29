@@ -34,9 +34,4 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-    'brevo' => [
-        'api_key' => env('BREVO_API_KEY'),
-        'endpoint' => 'https://api.brevo.com/v3/smtp/email',
-        'timeout' => 10,
-    ],
 ];

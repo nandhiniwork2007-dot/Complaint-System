@@ -62,7 +62,7 @@ class EmailVerificationController extends Controller
         $secrets = array_values(array_filter([
             config('mail.mailers.smtp.username'),
             config('mail.mailers.smtp.password'),
-            config('services.brevo.api_key'),
+            config('services.resend.key'),
         ], static fn (mixed $value): bool => is_string($value) && $value !== ''));
 
         if ($secrets !== []) {
