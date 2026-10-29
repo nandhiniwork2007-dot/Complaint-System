@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('api/auth')->group(function () {
     Route::post('/register', [RegisteredUserController::class, 'store'])->middleware('guest');
-    Route::post('/login', [AuthenticatedSessionController::class, 'store'])->middleware('guest');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
     Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])->middleware('guest');
     Route::post('/reset-password', [NewPasswordController::class, 'store'])->middleware('guest');
     Route::get('/user', [EmailVerificationController::class, 'user']);

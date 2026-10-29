@@ -103,8 +103,6 @@ async function refreshStatus(showSuccess = false) {
     }
 }
 
-x
-
 async function resend() {
     resending.value = true;
     try {
