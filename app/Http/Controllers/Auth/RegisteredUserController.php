@@ -22,7 +22,7 @@ class RegisteredUserController extends Controller
         try {
             event(new Registered($user));
         } catch (Throwable $exception) {
-            Log::channel('single')->error('Verification email could not be sent after registration.', [
+            Log::error('Verification email could not be sent after registration.', [
                 'user_id' => $user->id,
                 'exception' => $exception::class,
             ]);

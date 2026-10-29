@@ -21,7 +21,7 @@ class PasswordResetLinkController extends Controller
         try {
             $status = Password::sendResetLink($validated);
         } catch (Throwable $exception) {
-            Log::channel('single')->error('Password reset email could not be sent.', [
+            Log::error('Password reset email could not be sent.', [
                 'exception' => $exception::class,
             ]);
 

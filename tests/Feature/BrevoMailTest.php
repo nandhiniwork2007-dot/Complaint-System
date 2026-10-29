@@ -8,8 +8,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
+use Mockery;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 use Symfony\Component\Mime\Email;
@@ -67,8 +69,29 @@ class BrevoMailTest extends TestCase
         $this->assertInstanceOf(EsmtpTransport::class, Mail::mailer('smtp')->getSymfonyTransport());
     }
 
+    public function test_verification_notification_uses_the_local_smtp_mailer_without_network_delivery(): void
+    {
+        config([
+            'mail.default' => 'smtp',
+            'mail.mailers.smtp.transport' => 'array',
+            'mail.from.address' => 'local-gmail@example.com',
+            'mail.from.name' => 'Local CMS',
+        ]);
+
+        $user = User::factory()->unverified()->create(['email' => 'jane@example.com']);
+        $user->sendEmailVerificationNotification();
+
+        $message = Mail::mailer('smtp')->getSymfonyTransport()->messages()->first()->getOriginalMessage();
+
+        $this->assertInstanceOf(Email::class, $message);
+        $this->assertSame('local-gmail@example.com', $message->getFrom()[0]->getAddress());
+        $this->assertSame('jane@example.com', $message->getTo()[0]->getAddress());
+        $this->assertStringContainsString('/email/verify/', (string) $message->getHtmlBody());
+    }
+
     public function test_brevo_transport_throws_when_api_rejects_or_returns_invalid_success_response(): void
     {
+        Log::spy();
         Http::fake([
             'api.brevo.com/v3/smtp/email' => Http::response(['message' => 'rejected'], 401),
         ]);
@@ -81,6 +104,11 @@ class BrevoMailTest extends TestCase
             $this->assertStringNotContainsString('test-api-key', $exception->getMessage());
         }
 
+        Log::shouldHaveReceived('error')
+            ->once()
+            ->with('Brevo rejected a transactional email request.', Mockery::on(fn (array $context): bool => $context['exception'] === TransportException::class
+                && $context['http_status'] === 401));
+
         Http::fake([
             'api.brevo.com/v3/smtp/email' => Http::response(['unexpected' => 'response'], 201),
         ]);
@@ -91,6 +119,7 @@ class BrevoMailTest extends TestCase
 
     public function test_brevo_transport_wraps_connection_failures_without_exposing_details(): void
     {
+        Log::spy();
         Http::fake(function (): never {
             throw new ConnectionException('timeout while using secret test-api-key');
         });
@@ -102,6 +131,11 @@ class BrevoMailTest extends TestCase
             $this->assertSame('Brevo email request failed.', $exception->getMessage());
             $this->assertStringNotContainsString('test-api-key', $exception->getMessage());
         }
+
+        Log::shouldHaveReceived('error')
+            ->once()
+            ->with('Brevo transactional email request failed.', Mockery::on(fn (array $context): bool => $context['exception'] === ConnectionException::class
+                && $context['http_status'] === null));
     }
 
     public function test_registration_sends_verification_email_through_brevo(): void

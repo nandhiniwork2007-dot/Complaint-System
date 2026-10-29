@@ -66,8 +66,11 @@ class BrevoTransport extends AbstractTransport
             $messageId = $response->json('messageId');
 
             if ($response->status() !== 201 || ! is_string($messageId) || $messageId === '') {
-                Log::channel('single')->error('Brevo rejected an email request.', [
-                    'status' => $response->status(),
+                Log::error('Brevo rejected a transactional email request.', [
+                    'provider' => 'brevo',
+                    'operation' => 'send_transactional_email',
+                    'exception' => TransportException::class,
+                    'http_status' => $response->status(),
                 ]);
 
                 throw new TransportException('Brevo did not accept the email request.');
@@ -75,8 +78,11 @@ class BrevoTransport extends AbstractTransport
         } catch (TransportException $exception) {
             throw $exception;
         } catch (Throwable $exception) {
-            Log::channel('single')->error('Brevo email request failed.', [
+            Log::error('Brevo transactional email request failed.', [
+                'provider' => 'brevo',
+                'operation' => 'send_transactional_email',
                 'exception' => $exception::class,
+                'http_status' => null,
             ]);
 
             throw new TransportException('Brevo email request failed.');
