@@ -40,7 +40,7 @@ COPY php-production.ini /usr/local/etc/php/conf.d/99-production.ini
 
 RUN chmod +x /usr/local/bin/render-entrypoint \
     && composer dump-autoload --no-dev --optimize --no-scripts \
-    && php -r 'require "vendor/autoload.php"; if (! class_exists("Nette\\\\Schema\\\\Kind")) { exit(1); }' \
+    && && php -r 'require "vendor/autoload.php"; exit(class_exists("Nette\\Schema\\Kind") ? 0 : 1);'  \
     && php artisan package:discover --ansi \
     && php artisan view:cache \
     && mkdir -p storage/app/private storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
